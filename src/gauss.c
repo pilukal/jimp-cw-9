@@ -1,5 +1,29 @@
 #include "gauss.h"
 
+static void rows_swap(Matrix *mat, int r_a, int r_b) {
+	for(int i = 0; i < mat->c; i++) {
+		double tmp = mat->data[r_a][i];
+		mat->data[r_a][i] = mat->data[r_b][i];
+		mat->data[r_b][i] = tmp;
+	}
+}
+
+static void row_select(Matrix *mat, Matrix *b, int r) {
+	double max = abs(mat->data[r][r]);
+	double max_r = r;
+	for(int i = r + 1; i < mat->r; i++) {
+		if(abs(mat->data[i][r]) > max) {
+			max = abs(mat->data[i][r]);
+			max_r = i;
+		}
+	}
+
+	if(max_r != r) {
+		rows_swap(mat, r, max_r);
+		rows_swap(b, r, max_r);
+	}
+}
+
 /*
  * Mnoży przez skalar i odejmuje wiersze macierzy.
  * Zwraca 0 - zakończenie sukcesem
