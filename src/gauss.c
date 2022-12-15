@@ -1,5 +1,7 @@
 #include "gauss.h"
 
+#include <stdlib.h>
+
 static void rows_swap(Matrix *mat, int r_a, int r_b) {
 	for(int i = 0; i < mat->c; i++) {
 		double tmp = mat->data[r_a][i];
@@ -47,38 +49,14 @@ static int multiply_and_substact(Matrix *mat, Matrix *b, int r_1, int r_2) {
  */
 int eliminate(Matrix *mat, Matrix *b){
     for(int i = 0; i < mat->c; i++) {
+		row_select(mat, b, i);
 		for(int j = i + 1; j < mat->c; j++) {
-			double max = abs(mat->data[i][i]);
-			double max_r = i;
-			for(int r = i + 1; r < mat->r; r++) {
-				if(abs(mat->data[r][i]) > max) {
-					max = abs(mat->data[r][i]);
-					max_r = i;
-				}
-			}
-
-			for(int s = 0; s < mat->c; s++) {
-				double t = mat->data[i][s];
-				mat->data[i][s] = mat->data[max_r][s];
-				mat->data[max_r][s] = t;
-			}
-
-			
-			double t = b->data[i][0];
-			b->data[i][0] = b->data[max_r][0];
-			b->data[max_r][0] = t;
-
-			if(max_r != r) {
-				rows_swap(mat, r, max_r);
-				rows_swap(b, r, max_r);
-			}
-
 			int ret = multiply_and_substact(mat, b, i, j);
 			if(ret == 1) {
 				return 1;
 			}
 		}
 	}
+
 	return 0;
 }
-
